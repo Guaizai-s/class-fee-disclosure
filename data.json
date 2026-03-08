@@ -1,18 +1,19 @@
 [
   {
-    "date": "2024-03-01",
+    "date": "2026-03-08",
     "type": "income",
-    "reason": "班费收缴（春季学期）",
-    "amount": 5000.00,
-    "handler": "张三",
-    "note": "全班50人，每人100元"
+    "reason": "班费收缴",
+    "amount": 126,
+    "handler": "苏梦晓",
+    "note": "42*3"
   },
   {
-    "date": "2024-03-05",
+    "date": "2026-03-08",
     "type": "expense",
-    "reason": "班级活动物资采购",
-    "amount": 380.50,
-    "handler": "李四",
-    "note": "团建活动用品"
+    "reason": "搬书包车费用",
+    "amount": 30,
+    "handler": "郑晨希",
+    "note": ""
   }
 ]
+
