@@ -6,7 +6,7 @@
     "amount": 126,
     "handler": "苏梦晓",
     "note": "42*3"
-  }
+  },
   {
     "date": "2026-03-08",
     "type": "expense",
@@ -14,7 +14,7 @@
     "amount": 30,
     "handler": "郑晨希",
     "note": ""
-  }
+  },
   {
     "date": "2026-03-08",
     "type": "expense",
@@ -24,6 +24,7 @@
     "note": ""
   }
 ]
+
 
 
 
