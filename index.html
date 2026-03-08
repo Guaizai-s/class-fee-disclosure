@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>班费报销公开</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
@@ -23,7 +19,7 @@
             margin: 0 auto;
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
         }
 
@@ -32,18 +28,29 @@
             color: white;
             padding: 40px 30px;
             text-align: center;
+            position: relative;
         }
 
-        header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        header p { font-size: 1.1em; opacity: 0.9; }
+
+        .admin-toggle {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
         }
 
-        header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
+        .admin-toggle:hover { background: rgba(255,255,255,0.35); }
 
+        /* 汇总卡片 */
         .summary {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -56,36 +63,18 @@
             background: white;
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             text-align: center;
             transition: transform 0.3s ease;
         }
 
-        .summary-card:hover {
-            transform: translateY(-5px);
-        }
+        .summary-card:hover { transform: translateY(-5px); }
+        .summary-card h3 { color: #666; font-size: 0.9em; margin-bottom: 10px; text-transform: uppercase; }
+        .summary-card .amount { font-size: 2em; font-weight: bold; color: #667eea; }
+        .summary-card.income .amount { color: #10b981; }
+        .summary-card.expense .amount { color: #ef4444; }
 
-        .summary-card h3 {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .summary-card .amount {
-            font-size: 2em;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .summary-card.income .amount {
-            color: #10b981;
-        }
-
-        .summary-card.expense .amount {
-            color: #ef4444;
-        }
-
+        /* 搜索筛选 */
         .controls {
             padding: 20px 30px;
             display: flex;
@@ -96,10 +85,7 @@
             border-bottom: 2px solid #f0f0f0;
         }
 
-        .search-box {
-            flex: 1;
-            min-width: 200px;
-        }
+        .search-box { flex: 1; min-width: 200px; }
 
         .search-box input {
             width: 100%;
@@ -110,16 +96,9 @@
             transition: border-color 0.3s;
         }
 
-        .search-box input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
+        .search-box input:focus { outline: none; border-color: #667eea; }
 
-        .filter-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+        .filter-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
 
         .filter-btn {
             padding: 10px 20px;
@@ -132,74 +111,40 @@
             transition: all 0.3s;
         }
 
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: #667eea;
-            color: white;
-        }
+        .filter-btn:hover, .filter-btn.active { background: #667eea; color: white; }
 
-        .table-container {
-            padding: 30px;
-            overflow-x: auto;
-        }
+        /* 表格 */
+        .table-container { padding: 30px; overflow-x: auto; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f8f9fa; }
+        th { padding: 15px; text-align: left; font-weight: 600; color: #333; border-bottom: 2px solid #667eea; }
+        td { padding: 15px; border-bottom: 1px solid #e0e0e0; }
+        tbody tr { transition: background-color 0.2s; }
+        tbody tr:hover { background-color: #f8f9fa; }
 
-        thead {
-            background: #f8f9fa;
-        }
+        .type-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; }
+        .type-income { background: #d1fae5; color: #065f46; }
+        .type-expense { background: #fee2e2; color: #991b1b; }
+        .amount-positive { color: #10b981; font-weight: 600; }
+        .amount-negative { color: #ef4444; font-weight: 600; }
 
-        th {
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            color: #333;
-            border-bottom: 2px solid #667eea;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        tbody tr {
-            transition: background-color 0.2s;
-        }
-
-        tbody tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        .type-badge {
-            display: inline-block;
+        .action-btn {
             padding: 5px 12px;
-            border-radius: 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
             font-size: 0.85em;
-            font-weight: 600;
+            margin-right: 5px;
+            transition: opacity 0.2s;
         }
 
-        .type-income {
-            background: #d1fae5;
-            color: #065f46;
-        }
+        .action-btn:hover { opacity: 0.8; }
+        .btn-edit { background: #dbeafe; color: #1d4ed8; }
+        .btn-delete { background: #fee2e2; color: #991b1b; }
 
-        .type-expense {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .amount-positive {
-            color: #10b981;
-            font-weight: 600;
-        }
-
-        .amount-negative {
-            color: #ef4444;
-            font-weight: 600;
-        }
+        .loading { text-align: center; padding: 60px; color: #666; font-size: 1.2em; }
+        .no-results { text-align: center; padding: 40px; color: #999; font-size: 1.1em; }
 
         footer {
             padding: 20px 30px;
@@ -209,258 +154,596 @@
             font-size: 0.9em;
         }
 
-        .edit-notice {
-            margin-top: 10px;
-            padding: 15px;
-            background: #fff3cd;
-            border-radius: 8px;
-            color: #856404;
+        /* 管理面板 */
+        .admin-panel {
+            display: none;
+            background: #f0f4ff;
+            border-top: 3px solid #667eea;
+            padding: 30px;
         }
 
-        .edit-notice a {
+        .admin-panel.visible { display: block; }
+
+        .admin-panel h2 {
             color: #667eea;
-            text-decoration: underline;
+            margin-bottom: 20px;
+            font-size: 1.3em;
         }
 
-        .loading {
-            text-align: center;
-            padding: 60px;
+        .token-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .token-section p {
+            font-size: 0.9em;
             color: #666;
-            font-size: 1.2em;
+            margin-bottom: 10px;
         }
 
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-            font-size: 1.1em;
+        .token-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
+
+        .token-row input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-family: monospace;
+        }
+
+        .token-row input:focus { outline: none; border-color: #667eea; }
+
+        .token-status {
+            font-size: 0.85em;
+            margin-top: 8px;
+        }
+
+        .token-status.ok { color: #10b981; }
+        .token-status.err { color: #ef4444; }
+
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .form-section h3 { color: #333; margin-bottom: 15px; font-size: 1.1em; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+
+        .form-group label { font-size: 0.85em; color: #555; font-weight: 600; }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus { outline: none; border-color: #667eea; }
+
+        .form-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5a6fd8; }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .btn-secondary:hover { background: #ccc; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .save-status {
+            margin-top: 12px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .save-status.saving { display: block; background: #dbeafe; color: #1d4ed8; }
+        .save-status.success { display: block; background: #d1fae5; color: #065f46; }
+        .save-status.error { display: block; background: #fee2e2; color: #991b1b; }
+
+        /* 模态框（编辑用） */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.visible { display: flex; }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal h3 { color: #333; margin-bottom: 20px; font-size: 1.2em; }
+        .modal .form-group { margin-bottom: 12px; }
+        .modal .form-actions { margin-top: 20px; }
 
         @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.8em;
-            }
-
-            .summary {
-                grid-template-columns: 1fr;
-            }
-
-            .controls {
-                flex-direction: column;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            table {
-                font-size: 0.9em;
-            }
-
-            th, td {
-                padding: 10px;
-            }
+            header h1 { font-size: 1.8em; }
+            .summary { grid-template-columns: 1fr; }
+            .controls { flex-direction: column; }
+            .search-box { width: 100%; }
+            table { font-size: 0.9em; }
+            th, td { padding: 10px; }
+            .admin-toggle { position: static; margin-top: 15px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>班费报销公开</h1>
-            <p>透明、公开、可查询</p>
-        </header>
+<div class="container">
+    <header>
+        <h1>班费报销公开</h1>
+        <p>透明、公开、可查询</p>
+        <button class="admin-toggle" onclick="toggleAdmin()">班委管理</button>
+    </header>
 
-        <div class="summary">
-            <div class="summary-card income">
-                <h3>总收入</h3>
-                <div class="amount" id="totalIncome">¥0.00</div>
-            </div>
-            <div class="summary-card expense">
-                <h3>总支出</h3>
-                <div class="amount" id="totalExpense">¥0.00</div>
-            </div>
-            <div class="summary-card">
-                <h3>当前余额</h3>
-                <div class="amount" id="balance">¥0.00</div>
-            </div>
+    <!-- 汇总 -->
+    <div class="summary">
+        <div class="summary-card income">
+            <h3>总收入</h3>
+            <div class="amount" id="totalIncome">¥0.00</div>
         </div>
-
-        <div class="controls">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="搜索事由、经手人...">
-            </div>
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">全部</button>
-                <button class="filter-btn" data-filter="income">收入</button>
-                <button class="filter-btn" data-filter="expense">支出</button>
-            </div>
+        <div class="summary-card expense">
+            <h3>总支出</h3>
+            <div class="amount" id="totalExpense">¥0.00</div>
         </div>
-
-        <div class="table-container">
-            <div id="loading" class="loading">加载中...</div>
-            <table id="recordTable" style="display:none;">
-                <thead>
-                    <tr>
-                        <th>日期</th>
-                        <th>类型</th>
-                        <th>事由</th>
-                        <th>金额</th>
-                        <th>经手人</th>
-                        <th>备注</th>
-                    </tr>
-                </thead>
-                <tbody id="recordBody">
-                </tbody>
-            </table>
-            <div id="noResults" class="no-results" style="display: none;">
-                暂无符合条件的记录
-            </div>
+        <div class="summary-card">
+            <h3>当前余额</h3>
+            <div class="amount" id="balance">¥0.00</div>
         </div>
-
-        <footer>
-            <p>更新时间: <span id="updateTime"></span></p>
-            <p>如有疑问，请联系班委</p>
-            <div class="edit-notice">
-                <strong>💡 班委如何更新数据？</strong><br>
-                在 GitHub 仓库中直接编辑 <code>data.json</code> 文件即可，所有访问者会自动看到最新数据。<br>
-                <a href="https://github.com/你的用户名/仓库名/edit/main/data.json" target="_blank">点击这里编辑数据 →</a>
-            </div>
-        </footer>
     </div>
 
-    <script>
-        let records = [];
+    <!-- 搜索筛选 -->
+    <div class="controls">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="搜索事由、经手人...">
+        </div>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="income">收入</button>
+            <button class="filter-btn" data-filter="expense">支出</button>
+        </div>
+    </div>
 
-        // 从 GitHub 加载数据
-        async function loadData() {
-            try {
-                // 如果是本地测试，使用相对路径
-                // 如果已部署到 GitHub Pages，这个路径会自动指向正确的位置
-                const response = await fetch('data.json');
+    <!-- 表格 -->
+    <div class="table-container">
+        <div id="loading" class="loading">加载中...</div>
+        <table id="recordTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>类型</th>
+                    <th>事由</th>
+                    <th>金额</th>
+                    <th>经手人</th>
+                    <th>备注</th>
+                    <th id="actionHeader" style="display:none;">操作</th>
+                </tr>
+            </thead>
+            <tbody id="recordBody"></tbody>
+        </table>
+        <div id="noResults" class="no-results" style="display:none;">暂无符合条件的记录</div>
+    </div>
 
-                if (!response.ok) {
-                    throw new Error('数据加载失败');
-                }
+    <!-- 管理面板 -->
+    <div class="admin-panel" id="adminPanel">
+        <h2>班委管理面板</h2>
 
-                records = await response.json();
+        <!-- Token 输入 -->
+        <div class="token-section">
+            <p>输入 GitHub Token（只存在当前浏览器，关闭标签页自动清除，不会上传到 GitHub）</p>
+            <div class="token-row">
+                <input type="password" id="tokenInput" placeholder="粘贴 GitHub Personal Access Token..." />
+                <button class="btn btn-primary" onclick="saveToken()">确认</button>
+                <button class="btn btn-secondary" onclick="clearToken()">清除</button>
+            </div>
+            <div class="token-status" id="tokenStatus"></div>
+        </div>
 
-                // 按日期排序（最新的在前面）
-                records.sort((a, b) => new Date(b.date) - new Date(a.date));
+        <!-- 添加记录 -->
+        <div class="form-section">
+            <h3>添加新记录</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>日期</label>
+                    <input type="date" id="newDate" />
+                </div>
+                <div class="form-group">
+                    <label>类型</label>
+                    <select id="newType">
+                        <option value="income">收入</option>
+                        <option value="expense">支出</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>事由</label>
+                    <input type="text" id="newReason" placeholder="如：班费收缴" />
+                </div>
+                <div class="form-group">
+                    <label>金额（元）</label>
+                    <input type="number" id="newAmount" min="0" step="0.01" placeholder="0.00" />
+                </div>
+                <div class="form-group">
+                    <label>经手人</label>
+                    <input type="text" id="newHandler" placeholder="姓名" />
+                </div>
+                <div class="form-group">
+                    <label>备注</label>
+                    <input type="text" id="newNote" placeholder="选填" />
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-success" onclick="addRecord()">添加并保存</button>
+                <button class="btn btn-secondary" onclick="clearForm()">清空</button>
+            </div>
+            <div class="save-status" id="saveStatus"></div>
+        </div>
+    </div>
 
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('recordTable').style.display = 'table';
+    <footer>
+        <p>更新时间: <span id="updateTime"></span></p>
+        <p>如有疑问，请联系班委</p>
+    </footer>
+</div>
 
-                calculateSummary();
-                applyFilters();
-                setUpdateTime();
-            } catch (error) {
-                document.getElementById('loading').innerHTML =
-                    '<p style="color: #ef4444;">❌ 数据加载失败</p>' +
-                    '<p style="font-size: 0.9em; margin-top: 10px;">请确保 data.json 文件存在并格式正确</p>';
-                console.error('加载数据出错:', error);
-            }
+<!-- 编辑模态框 -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <h3>编辑记录</h3>
+        <input type="hidden" id="editIndex" />
+        <div class="form-group">
+            <label>日期</label>
+            <input type="date" id="editDate" />
+        </div>
+        <div class="form-group">
+            <label>类型</label>
+            <select id="editType">
+                <option value="income">收入</option>
+                <option value="expense">支出</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>事由</label>
+            <input type="text" id="editReason" />
+        </div>
+        <div class="form-group">
+            <label>金额（元）</label>
+            <input type="number" id="editAmount" min="0" step="0.01" />
+        </div>
+        <div class="form-group">
+            <label>经手人</label>
+            <input type="text" id="editHandler" />
+        </div>
+        <div class="form-group">
+            <label>备注</label>
+            <input type="text" id="editNote" />
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-primary" onclick="saveEdit()">保存</button>
+            <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+        </div>
+        <div class="save-status" id="editStatus"></div>
+    </div>
+</div>
+
+<script>
+    const OWNER = 'Guaizai-s';
+    const REPO  = 'class-fee-disclosure';
+    const FILE  = 'data.json';
+    const API   = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`;
+
+    let records = [];
+    let adminVisible = false;
+
+    // ── Token 管理 ──────────────────────────────────────────
+    function getToken() { return sessionStorage.getItem('gh_token') || ''; }
+
+    function saveToken() {
+        const t = document.getElementById('tokenInput').value.trim();
+        if (!t) return showTokenStatus('请先粘贴 Token', false);
+        sessionStorage.setItem('gh_token', t);
+        document.getElementById('tokenInput').value = '';
+        showTokenStatus('Token 已保存（关闭标签页后自动清除）', true);
+    }
+
+    function clearToken() {
+        sessionStorage.removeItem('gh_token');
+        document.getElementById('tokenInput').value = '';
+        showTokenStatus('已清除', false);
+    }
+
+    function showTokenStatus(msg, ok) {
+        const el = document.getElementById('tokenStatus');
+        el.textContent = msg;
+        el.className = 'token-status ' + (ok ? 'ok' : 'err');
+    }
+
+    // ── 管理面板切换 ─────────────────────────────────────────
+    function toggleAdmin() {
+        adminVisible = !adminVisible;
+        document.getElementById('adminPanel').classList.toggle('visible', adminVisible);
+        document.getElementById('actionHeader').style.display = adminVisible ? '' : 'none';
+        if (adminVisible) {
+            // 设置默认日期为今天
+            const today = new Date().toISOString().slice(0, 10);
+            document.getElementById('newDate').value = today;
+            if (getToken()) showTokenStatus('Token 已就绪', true);
         }
+        renderTable(getFilteredRecords());
+    }
 
-        // 计算统计数据
-        function calculateSummary() {
-            const income = records
-                .filter(r => r.type === 'income')
-                .reduce((sum, r) => sum + r.amount, 0);
-
-            const expense = records
-                .filter(r => r.type === 'expense')
-                .reduce((sum, r) => sum + r.amount, 0);
-
-            const balance = income - expense;
-
-            document.getElementById('totalIncome').textContent = `¥${income.toFixed(2)}`;
-            document.getElementById('totalExpense').textContent = `¥${expense.toFixed(2)}`;
-            document.getElementById('balance').textContent = `¥${balance.toFixed(2)}`;
-        }
-
-        // 渲染表格
-        function renderTable(data) {
-            const tbody = document.getElementById('recordBody');
-            const noResults = document.getElementById('noResults');
-
-            if (data.length === 0) {
-                tbody.innerHTML = '';
-                noResults.style.display = 'block';
-                return;
-            }
-
-            noResults.style.display = 'none';
-            tbody.innerHTML = data.map(record => {
-                const displayAmount = record.type === 'income' ? record.amount : -record.amount;
-
-                return `
-                    <tr>
-                        <td>${record.date}</td>
-                        <td>
-                            <span class="type-badge type-${record.type}">
-                                ${record.type === 'income' ? '收入' : '支出'}
-                            </span>
-                        </td>
-                        <td>${record.reason}</td>
-                        <td class="${displayAmount >= 0 ? 'amount-positive' : 'amount-negative'}">
-                            ${displayAmount >= 0 ? '+' : ''}¥${Math.abs(displayAmount).toFixed(2)}
-                        </td>
-                        <td>${record.handler}</td>
-                        <td>${record.note}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        // 应用筛选
-        function applyFilters() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
-
-            let filtered = records;
-
-            if (activeFilter !== 'all') {
-                filtered = filtered.filter(r => r.type === activeFilter);
-            }
-
-            if (searchTerm) {
-                filtered = filtered.filter(r =>
-                    r.reason.toLowerCase().includes(searchTerm) ||
-                    r.handler.toLowerCase().includes(searchTerm) ||
-                    r.note.toLowerCase().includes(searchTerm)
-                );
-            }
-
-            renderTable(filtered);
-        }
-
-        // 搜索功能
-        document.getElementById('searchInput').addEventListener('input', applyFilters);
-
-        // 筛选功能
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                applyFilters();
-            });
+    // ── GitHub API：读取文件 SHA ──────────────────────────────
+    async function getFileSHA() {
+        const res = await fetch(API, {
+            headers: { Authorization: `token ${getToken()}`, Accept: 'application/vnd.github+json' }
         });
+        if (!res.ok) throw new Error('获取文件信息失败，请检查 Token 是否正确');
+        const json = await res.json();
+        return json.sha;
+    }
 
-        // 设置更新时间
-        function setUpdateTime() {
-            const now = new Date();
-            const dateStr = now.toLocaleString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
+    // ── GitHub API：写入文件 ──────────────────────────────────
+    async function pushData(newRecords, statusEl) {
+        if (!getToken()) {
+            showStatus(statusEl, '请先在上方输入并确认 GitHub Token', 'error');
+            return false;
+        }
+        showStatus(statusEl, '正在保存到 GitHub...', 'saving');
+        try {
+            const sha = await getFileSHA();
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(newRecords, null, 2))));
+            const res = await fetch(API, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `token ${getToken()}`,
+                    Accept: 'application/vnd.github+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `更新班费记录 ${new Date().toLocaleString('zh-CN')}`,
+                    content,
+                    sha
+                })
             });
-            document.getElementById('updateTime').textContent = dateStr;
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.message || '保存失败');
+            }
+            records = newRecords;
+            records.sort((a, b) => new Date(b.date) - new Date(a.date));
+            calculateSummary();
+            applyFilters();
+            showStatus(statusEl, '保存成功！网站数据已更新', 'success');
+            return true;
+        } catch (e) {
+            showStatus(statusEl, '保存失败：' + e.message, 'error');
+            return false;
+        }
+    }
+
+    function showStatus(el, msg, type) {
+        el.textContent = msg;
+        el.className = 'save-status ' + type;
+    }
+
+    // ── 添加记录 ─────────────────────────────────────────────
+    async function addRecord() {
+        const date    = document.getElementById('newDate').value;
+        const type    = document.getElementById('newType').value;
+        const reason  = document.getElementById('newReason').value.trim();
+        const amount  = parseFloat(document.getElementById('newAmount').value);
+        const handler = document.getElementById('newHandler').value.trim();
+        const note    = document.getElementById('newNote').value.trim();
+
+        if (!date || !reason || isNaN(amount) || amount <= 0 || !handler) {
+            showStatus(document.getElementById('saveStatus'), '请填写日期、事由、金额（大于0）和经手人', 'error');
+            return;
         }
 
-        // 初始化 - 从 GitHub 加载数据
-        loadData();
-    </script>
+        const newRecord = { date, type, reason, amount, handler, note };
+        const newRecords = [...records, newRecord];
+        const ok = await pushData(newRecords, document.getElementById('saveStatus'));
+        if (ok) clearForm();
+    }
+
+    function clearForm() {
+        document.getElementById('newReason').value = '';
+        document.getElementById('newAmount').value = '';
+        document.getElementById('newHandler').value = '';
+        document.getElementById('newNote').value = '';
+        document.getElementById('newType').value = 'income';
+        document.getElementById('newDate').value = new Date().toISOString().slice(0, 10);
+    }
+
+    // ── 删除记录 ─────────────────────────────────────────────
+    async function deleteRecord(idx) {
+        const r = records[idx];
+        if (!confirm(`确认删除：${r.date} ${r.reason} ¥${r.amount}？`)) return;
+        const newRecords = records.filter((_, i) => i !== idx);
+        await pushData(newRecords, document.getElementById('saveStatus'));
+    }
+
+    // ── 编辑记录 ─────────────────────────────────────────────
+    function openEdit(idx) {
+        const r = records[idx];
+        document.getElementById('editIndex').value = idx;
+        document.getElementById('editDate').value = r.date;
+        document.getElementById('editType').value = r.type;
+        document.getElementById('editReason').value = r.reason;
+        document.getElementById('editAmount').value = r.amount;
+        document.getElementById('editHandler').value = r.handler;
+        document.getElementById('editNote').value = r.note || '';
+        document.getElementById('editStatus').className = 'save-status';
+        document.getElementById('editModal').classList.add('visible');
+    }
+
+    function closeModal() {
+        document.getElementById('editModal').classList.remove('visible');
+    }
+
+    async function saveEdit() {
+        const idx     = parseInt(document.getElementById('editIndex').value);
+        const date    = document.getElementById('editDate').value;
+        const type    = document.getElementById('editType').value;
+        const reason  = document.getElementById('editReason').value.trim();
+        const amount  = parseFloat(document.getElementById('editAmount').value);
+        const handler = document.getElementById('editHandler').value.trim();
+        const note    = document.getElementById('editNote').value.trim();
+
+        if (!date || !reason || isNaN(amount) || amount <= 0 || !handler) {
+            showStatus(document.getElementById('editStatus'), '请填写完整信息', 'error');
+            return;
+        }
+
+        const newRecords = [...records];
+        newRecords[idx] = { date, type, reason, amount, handler, note };
+        const ok = await pushData(newRecords, document.getElementById('editStatus'));
+        if (ok) setTimeout(closeModal, 1000);
+    }
+
+    // ── 数据加载 ─────────────────────────────────────────────
+    async function loadData() {
+        try {
+            const res = await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${FILE}?t=${Date.now()}`);
+            if (!res.ok) throw new Error('加载失败');
+            records = await res.json();
+            records.sort((a, b) => new Date(b.date) - new Date(a.date));
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('recordTable').style.display = 'table';
+            calculateSummary();
+            applyFilters();
+            setUpdateTime();
+        } catch (e) {
+            document.getElementById('loading').innerHTML =
+                '<p style="color:#ef4444">❌ 数据加载失败，请检查网络或联系班委</p>';
+        }
+    }
+
+    // ── 统计 ─────────────────────────────────────────────────
+    function calculateSummary() {
+        const income  = records.filter(r => r.type === 'income').reduce((s, r) => s + r.amount, 0);
+        const expense = records.filter(r => r.type === 'expense').reduce((s, r) => s + r.amount, 0);
+        document.getElementById('totalIncome').textContent  = `¥${income.toFixed(2)}`;
+        document.getElementById('totalExpense').textContent = `¥${expense.toFixed(2)}`;
+        document.getElementById('balance').textContent      = `¥${(income - expense).toFixed(2)}`;
+    }
+
+    // ── 渲染表格 ─────────────────────────────────────────────
+    function renderTable(data) {
+        const tbody     = document.getElementById('recordBody');
+        const noResults = document.getElementById('noResults');
+
+        if (data.length === 0) {
+            tbody.innerHTML = '';
+            noResults.style.display = 'block';
+            return;
+        }
+
+        noResults.style.display = 'none';
+        tbody.innerHTML = data.map((record, i) => {
+            const realIdx = records.indexOf(record);
+            const displayAmount = record.type === 'income' ? record.amount : -record.amount;
+            const actionCell = adminVisible
+                ? `<td>
+                     <button class="action-btn btn-edit" onclick="openEdit(${realIdx})">编辑</button>
+                     <button class="action-btn btn-delete" onclick="deleteRecord(${realIdx})">删除</button>
+                   </td>`
+                : '';
+            return `
+                <tr>
+                    <td>${record.date}</td>
+                    <td><span class="type-badge type-${record.type}">${record.type === 'income' ? '收入' : '支出'}</span></td>
+                    <td>${record.reason}</td>
+                    <td class="${displayAmount >= 0 ? 'amount-positive' : 'amount-negative'}">
+                        ${displayAmount >= 0 ? '+' : ''}¥${Math.abs(displayAmount).toFixed(2)}
+                    </td>
+                    <td>${record.handler}</td>
+                    <td>${record.note || ''}</td>
+                    ${actionCell}
+                </tr>`;
+        }).join('');
+    }
+
+    // ── 筛选 ─────────────────────────────────────────────────
+    function getFilteredRecords() {
+        const searchTerm  = document.getElementById('searchInput').value.toLowerCase();
+        const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+        let filtered = records;
+        if (activeFilter !== 'all') filtered = filtered.filter(r => r.type === activeFilter);
+        if (searchTerm) filtered = filtered.filter(r =>
+            r.reason.toLowerCase().includes(searchTerm) ||
+            r.handler.toLowerCase().includes(searchTerm) ||
+            (r.note || '').toLowerCase().includes(searchTerm)
+        );
+        return filtered;
+    }
+
+    function applyFilters() { renderTable(getFilteredRecords()); }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            applyFilters();
+        });
+    });
+
+    // 点击遮罩关闭模态框
+    document.getElementById('editModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    function setUpdateTime() {
+        document.getElementById('updateTime').textContent =
+            new Date().toLocaleString('zh-CN', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+    }
+
+    loadData();
+</script>
 </body>
 </html>
