@@ -1,26 +1,10 @@
 [
   {
-    "date": "2026-03-08",
-    "type": "income",
-    "reason": "班费收缴",
-    "amount": 126,
-    "handler": "苏梦晓",
-    "note": "3*42"
-  },
-  {
-    "date": "2026-03-08",
+    "date": "2026-03-10",
     "type": "expense",
-    "reason": "搬书包车费用",
-    "amount": 30,
+    "reason": "名单打印",
+    "amount": 1,
     "handler": "郑晨希",
-    "note": ""
-  },
-  {
-    "date": "2026-03-08",
-    "type": "expense",
-    "reason": "购买A4纸",
-    "amount": 15,
-    "handler": "张会锋",
     "note": ""
   }
 ]
