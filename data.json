@@ -14,5 +14,13 @@
     "amount": 126,
     "handler": "苏梦晓",
     "note": ""
+  },
+  {
+    "date": "2026-03-10",
+    "type": "expense",
+    "reason": "搬书包车费用",
+    "amount": 30,
+    "handler": "郑晨希",
+    "note": ""
   }
 ]
