@@ -8,6 +8,14 @@
     "note": ""
   },
   {
+    "date": "2026-03-10",
+    "type": "expense",
+    "reason": "搬书包车费用",
+    "amount": 30,
+    "handler": "郑晨希",
+    "note": ""
+  },
+  {
     "date": "2026-03-08",
     "type": "income",
     "reason": "班费收取",
@@ -16,11 +24,11 @@
     "note": ""
   },
   {
-    "date": "2026-03-10",
+    "date": "2026-03-12",
     "type": "expense",
-    "reason": "搬书包车费用",
-    "amount": 30,
-    "handler": "郑晨希",
+    "reason": "购买A4纸",
+    "amount": 15,
+    "handler": "张会锋",
     "note": ""
   }
 ]
