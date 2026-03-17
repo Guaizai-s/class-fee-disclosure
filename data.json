@@ -30,5 +30,13 @@
     "amount": 126,
     "handler": "苏梦晓",
     "note": ""
+  },
+  {
+    "date": "2026-03-17",
+    "type": "expense",
+    "reason": "购买A4纸",
+    "amount": 15.6,
+    "handler": "张会锋",
+    "note": ""
   }
 ]
