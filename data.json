@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-03-17",
+    "type": "expense",
+    "reason": "购买A4纸",
+    "amount": 15.6,
+    "handler": "张会锋",
+    "note": ""
+  },
+  {
     "date": "2026-03-10",
     "type": "expense",
     "reason": "名单打印",
@@ -32,10 +40,10 @@
     "note": ""
   },
   {
-    "date": "2026-03-17",
+    "date": "2026-04-11",
     "type": "expense",
-    "reason": "购买A4纸",
-    "amount": 15.6,
+    "reason": "心理课资料打印",
+    "amount": 18.7,
     "handler": "张会锋",
     "note": ""
   }
