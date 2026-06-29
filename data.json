@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-04-11",
+    "type": "expense",
+    "reason": "心理课资料打印",
+    "amount": 18.7,
+    "handler": "张会锋",
+    "note": ""
+  },
+  {
     "date": "2026-03-17",
     "type": "expense",
     "reason": "购买A4纸",
@@ -40,11 +48,11 @@
     "note": ""
   },
   {
-    "date": "2026-04-11",
+    "date": "2026-06-29",
     "type": "expense",
-    "reason": "心理课资料打印",
-    "amount": 18.7,
-    "handler": "张会锋",
+    "reason": "美育光盘刻录",
+    "amount": 5,
+    "handler": "郑晨希",
     "note": ""
   }
 ]
