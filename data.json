@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-06-29",
+    "type": "expense",
+    "reason": "美育光盘刻录",
+    "amount": 5,
+    "handler": "郑晨希",
+    "note": ""
+  },
+  {
     "date": "2026-04-11",
     "type": "expense",
     "reason": "心理课资料打印",
@@ -48,10 +56,10 @@
     "note": ""
   },
   {
-    "date": "2026-06-29",
+    "date": "2026-09-01",
     "type": "expense",
-    "reason": "美育光盘刻录",
-    "amount": 5,
+    "reason": "搬书包车",
+    "amount": 30,
     "handler": "郑晨希",
     "note": ""
   }
