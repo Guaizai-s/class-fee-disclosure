@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>班费记录</title>
+    <script>
+        (() => {
+            const savedTheme = localStorage.getItem('class_fee_theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.dataset.theme = savedTheme || (prefersDark ? 'dark' : 'light');
+        })();
+    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -20,6 +27,22 @@
             --shadow-raised: 10px 10px 24px rgba(174, 184, 201, .48), -10px -10px 24px rgba(255, 255, 255, .9);
             --shadow-soft: 5px 5px 12px rgba(174, 184, 201, .36), -5px -5px 12px rgba(255, 255, 255, .82);
             --shadow-inset: inset 3px 3px 7px rgba(174, 184, 201, .34), inset -3px -3px 7px rgba(255, 255, 255, .86);
+        }
+
+        :root[data-theme="dark"] {
+            color-scheme: dark;
+            --bg: #171519;
+            --surface: #232126;
+            --surface-light: #2a272d;
+            --text: #f1ecef;
+            --muted: #aaa1a8;
+            --line: #3b363d;
+            --accent: #d6a0b5;
+            --income: #9bc7b5;
+            --expense: #e2a0ac;
+            --shadow-raised: 12px 12px 28px rgba(5, 4, 6, .5), -7px -7px 20px rgba(73, 65, 73, .17);
+            --shadow-soft: 6px 6px 14px rgba(5, 4, 6, .42), -5px -5px 13px rgba(75, 68, 75, .14);
+            --shadow-inset: inset 3px 3px 8px rgba(4, 3, 5, .5), inset -3px -3px 8px rgba(76, 68, 76, .14);
         }
 
         body {
@@ -45,18 +68,21 @@
             color: var(--text);
             padding: 42px 36px 26px;
             text-align: left;
-            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
         }
 
         header h1 { font-size: 2.2em; font-weight: 750; letter-spacing: -.04em; }
 
-        .admin-toggle {
-            position: absolute;
-            top: 34px;
-            right: 36px;
+        .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+        .admin-toggle,
+        .theme-toggle {
             background: var(--surface);
             border: 1px solid rgba(255,255,255,.75);
-            color: #586274;
+            color: var(--muted);
             padding: 10px 16px;
             border-radius: 14px;
             cursor: pointer;
@@ -65,8 +91,48 @@
             transition: transform .2s, box-shadow .2s;
         }
 
-        .admin-toggle:hover { transform: translateY(-1px); }
-        .admin-toggle:active { transform: translateY(0); box-shadow: var(--shadow-inset); }
+        .theme-toggle {
+            width: 42px;
+            height: 42px;
+            padding: 0;
+            display: grid;
+            place-items: center;
+            font-size: 1.1em;
+        }
+
+        .admin-toggle:hover,
+        .theme-toggle:hover { transform: translateY(-1px); color: var(--accent); }
+        .admin-toggle:active,
+        .theme-toggle:active { transform: translateY(0); box-shadow: var(--shadow-inset); }
+
+        :root[data-theme="dark"] body { background: radial-gradient(circle at 50% 0, #29242a 0, var(--bg) 42%); }
+        :root[data-theme="dark"] .container,
+        :root[data-theme="dark"] .summary-card,
+        :root[data-theme="dark"] .admin-toggle,
+        :root[data-theme="dark"] .theme-toggle,
+        :root[data-theme="dark"] .filter-btn,
+        :root[data-theme="dark"] .token-section,
+        :root[data-theme="dark"] .form-section,
+        :root[data-theme="dark"] tbody tr { border-color: rgba(255, 222, 234, .055); }
+        :root[data-theme="dark"] thead { background: rgba(255, 230, 240, .035); }
+        :root[data-theme="dark"] tbody tr:hover { background: rgba(255, 222, 234, .035); }
+        :root[data-theme="dark"] input,
+        :root[data-theme="dark"] select { background: #211f23; color: var(--text); }
+        :root[data-theme="dark"] input::placeholder { color: #746d74; }
+        :root[data-theme="dark"] .type-income { background: #293d37; color: #a9d5c4; }
+        :root[data-theme="dark"] .type-expense { background: #452d34; color: #e9abb7; }
+        :root[data-theme="dark"] .btn-edit { background: #34303d; color: #c3b8dc; }
+        :root[data-theme="dark"] .btn-delete { background: #452d34; color: #e9abb7; }
+        :root[data-theme="dark"] .btn-primary { background: var(--accent); color: #2a2025; }
+        :root[data-theme="dark"] .btn-primary:hover { background: #e0afc1; }
+        :root[data-theme="dark"] .btn-secondary { background: #343137; color: #d4ccd1; }
+        :root[data-theme="dark"] .btn-secondary:hover { background: #3c3840; }
+        :root[data-theme="dark"] .token-section p,
+        :root[data-theme="dark"] .form-section h3,
+        :root[data-theme="dark"] .form-group label,
+        :root[data-theme="dark"] .modal h3,
+        :root[data-theme="dark"] .loading,
+        :root[data-theme="dark"] .no-results { color: var(--muted); }
 
         /* 汇总卡片 */
         .summary {
@@ -332,7 +398,9 @@
             .container { border-radius: 24px; }
             header { padding: 30px 20px 20px; }
             header h1 { font-size: 1.75em; }
-            .admin-toggle { top: 24px; right: 20px; padding: 9px 12px; }
+            .header-actions { gap: 7px; }
+            .admin-toggle { padding: 9px 11px; }
+            .theme-toggle { width: 38px; height: 38px; }
 
             .summary {
                 grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -385,13 +453,25 @@
             .modal { width: calc(100% - 24px); max-height: 90vh; overflow-y: auto; padding: 22px; }
             footer { padding: 18px 14px 24px; }
         }
+
+        @media (max-width: 360px) {
+            header h1 { font-size: 1.5em; }
+            .admin-toggle { font-size: .82em; }
+        }
+
+        :root[data-theme="dark"] td:nth-child(5),
+        :root[data-theme="dark"] td:nth-child(5)::before,
+        :root[data-theme="dark"] td:nth-child(6)::before { color: var(--muted); }
     </style>
 </head>
 <body>
 <div class="container">
     <header>
         <h1>班费记录</h1>
-        <button class="admin-toggle" onclick="toggleAdmin()">班委管理</button>
+        <div class="header-actions">
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="切换暗色模式" title="切换暗色模式">☾</button>
+            <button class="admin-toggle" onclick="toggleAdmin()">班委管理</button>
+        </div>
     </header>
 
     <!-- 汇总 -->
@@ -551,6 +631,22 @@
 
     let records = [];
     let adminVisible = false;
+
+    // ── 明暗主题 ─────────────────────────────────────────────
+    function syncThemeButton() {
+        const isDark = document.documentElement.dataset.theme === 'dark';
+        const button = document.getElementById('themeToggle');
+        button.textContent = isDark ? '☀' : '☾';
+        button.setAttribute('aria-label', isDark ? '切换亮色模式' : '切换暗色模式');
+        button.title = isDark ? '切换亮色模式' : '切换暗色模式';
+    }
+
+    function toggleTheme() {
+        const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = nextTheme;
+        localStorage.setItem('class_fee_theme', nextTheme);
+        syncThemeButton();
+    }
 
     // ── Token 管理 ──────────────────────────────────────────
     function getToken() { return sessionStorage.getItem('gh_token') || ''; }
@@ -816,6 +912,7 @@
             new Date().toLocaleString('zh-CN', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
     }
 
+    syncThemeButton();
     loadData();
 </script>
 </body>
