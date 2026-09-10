@@ -70,5 +70,13 @@
     "amount": 126,
     "handler": "苏梦晓",
     "note": ""
+  },
+  {
+    "date": "2026-09-10",
+    "type": "expense",
+    "reason": "教师节花",
+    "amount": 48.6,
+    "handler": "张会锋",
+    "note": ""
   }
 ]
